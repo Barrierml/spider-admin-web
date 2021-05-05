@@ -1,3 +1,4 @@
+import { reverse } from "lodash";
 import { connect } from "react-redux";
 
 
@@ -11,12 +12,15 @@ export function Msg(props) {
             color = "yellow"
             break;
         case "mark":
+            color = "gray"
+            break;
+        case "debug":
             color = "blue"
             break;
         default:
             break;
     }
-    return <li className={`p-1 rounded border hover:text-white mt-1 hover:bg-${color}-400 text-${color}-400 border-${color}-400`}>
+    return <li className={`p-1 rounded whitespace-pre-wrap transition border text-lg font-medium leading-normal hover:text-white my-1 hover:bg-${color}-400 text-${color}-400 border-${color}-400`} >
         {props.data.data}
     </li>
 }
@@ -24,14 +28,14 @@ export function Msg(props) {
 function Logger(props) {
     let res;
     if (props.list && props.list.length > 0) {
-        res = props.list.map((e) =>
+        res = reverse(props.list).map((e) =>
             <Msg key={e.data} data={e}></Msg>
         )
     }
     else {
         res = <div className={"w-full h-40 flex justify-center items-center text-xl"}>当前无日志</div>
     }
-    return (<ul className={"w-screen max-w-3xl overflow-y-auto px-3"} style={{ maxHeight: "40vh" }}>
+    return (<ul className={"w-screen max-w-3xl overflow-y-auto px-5"} style={{ maxHeight: "40vh" }}>
         {res}
     </ul>)
 }

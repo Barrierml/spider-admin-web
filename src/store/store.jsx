@@ -1,5 +1,5 @@
 import { createStore, combineReducers } from 'redux'
-import _ from "lodash"
+import _, { reverse } from "lodash"
 
 function allSpiders(state = { list: [] }, action) {
     switch (action.type) {
@@ -27,7 +27,7 @@ export function addLog(name, msg) {
     }
 }
 
-export function changeStatus(name,ss) {
+export function changeStatus(name, ss) {
     store.dispatch({
         type: "status_change",
         name,
@@ -54,11 +54,11 @@ function logger(state = {}, action) {
         case "log_load":
             return {
                 ...state,
-                ["log_" + action.name]: action.list,
+                ["log_" + action.name]: reverse(action.list),
             }
         case "log_add":
             let list = _.clone(state["log_" + action.name]) || [];
-            list.push(action.msg);
+            list.splice(0, 0, action.msg);
             return {
                 ...state,
                 ["log_" + action.name]: list,

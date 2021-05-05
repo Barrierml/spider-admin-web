@@ -14,9 +14,13 @@ function Li(props) {
     let [showLog, setLog] = useState(false);
 
     async function openSpider() {
-        let res = await wsGet("open_spider", title);
-        console.log(res);
-        setLoad(!res);
+        await wsGet("open_spider", title);
+        setLoad(false);
+    }
+
+    async function stopSpider() {
+        await wsGet("stop_spider", title);
+        setLoad(false);
     }
 
     return (<div className=" relative hover:bg-light-blue-500 transition  hover:border-transparent hover:shadow-lg group block rounded-lg p-4 border border-gray-200">
@@ -31,8 +35,8 @@ function Li(props) {
                 <dd className="group-hover:text-light-blue-200 text-gray-700 text-sm font-medium">{status}</dd>
             </div>
             <div className="mt-2 col-start-2 row-start-1 row-end-3 flex space-x-2 flex-row">
-                <button onClick={() => { setLoad(true); openSpider() }} className="hover:bg-light-blue-200 hover:text-light-blue-800 group flex items-center rounded-md bg-light-blue-100 text-light-blue-600 text-sm font-medium px-4 py-2">运行</button>
-                <button className="hover:bg-red-200 hover:text-red-800 group flex items-center rounded-md bg-red-100 text-red-600 text-sm font-medium px-4 py-2">停止</button>
+                <button disabled={status === "运行中" ? true : false} onClick={() => { setLoad(true); openSpider() }} className="hover:bg-light-blue-200 hover:text-light-blue-800 group flex items-center rounded-md bg-light-blue-100 text-light-blue-600 text-sm font-medium px-4 py-2">运行</button>
+                <button disabled={status === "运行中" ? false : true} onClick={() => { setLoad(true); stopSpider() }} className="hover:bg-red-200 hover:text-red-800 group flex items-center rounded-md bg-red-100 text-red-600 text-sm font-medium px-4 py-2">停止</button>
                 <button onClick={() => { setShow(true) }} className="hover:bg-green-200 hover:text-green-800 group flex items-center rounded-md bg-green-100 text-green-600 text-sm font-medium px-4 py-2">配置</button>
             </div>
             <div className="mt-2 col-start-3 row-span-2 flex items-center justify-between">
@@ -57,7 +61,7 @@ function stateToProps(state, props) {
     let status = state.status["status_" + props.title];
     let lastInfor = "";
     if (logList && logList.length > 0) {
-        lastInfor = _.last(logList);
+        lastInfor = logList[0];
     }
     status = status ? "运行中" : "已停止";
     //运行状态的改变
