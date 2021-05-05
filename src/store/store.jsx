@@ -1,5 +1,7 @@
-import { createStore } from 'redux'
-function allSpiders(state = {}, action) {
+import { createStore, combineReducers } from 'redux'
+import _ from "lodash"
+
+function allSpiders(state = { list: [] }, action) {
     switch (action.type) {
         case 'list_update':
             return { list: action.list };
@@ -7,5 +9,63 @@ function allSpiders(state = {}, action) {
             return state;
     }
 }
-const store = createStore(allSpiders);
+
+
+
+export function loadLog(name, list) {
+    return {
+        type: "log_load",
+        name,
+        list,
+    }
+}
+export function addLog(name, msg) {
+    return {
+        type: "log_add",
+        name,
+        msg,
+    }
+}
+
+export function changeStatus(name,ss) {
+    store.dispatch({
+        type: "status_change",
+        name,
+        status: ss,
+    });
+}
+
+
+function status(state = {}, action) {
+    switch (action.type) {
+        case "status_change":
+            return {
+                ...state,
+                ["status_" + action.name]: action.status,
+            }
+        default:
+            return state;
+    }
+}
+
+
+function logger(state = {}, action) {
+    switch (action.type) {
+        case "log_load":
+            return {
+                ...state,
+                ["log_" + action.name]: action.list,
+            }
+        case "log_add":
+            let list = _.clone(state["log_" + action.name]) || [];
+            list.push(action.msg);
+            return {
+                ...state,
+                ["log_" + action.name]: list,
+            }
+        default:
+            return state;
+    }
+}
+const store = createStore(combineReducers({ allSpiders, logger, status }));
 export default store;

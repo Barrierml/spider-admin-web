@@ -5,7 +5,7 @@ export default function loading(props) {
             <div className="border-black rounded-full w-8 h-8 border-t-2 animate-spin">
             </div>
             <div>
-                缓冲中
+                {props.msg}
             </div>
         </div>
     )

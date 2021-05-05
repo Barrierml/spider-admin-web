@@ -22,7 +22,7 @@ class List extends react.Component {
 
 const stateToProps = (state) => {
     return {
-        list: state.list,
+        list: state.allSpiders.list,
     }
 }
 
