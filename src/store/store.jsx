@@ -1,10 +1,17 @@
 import { createStore, combineReducers } from 'redux'
-import _, { reverse } from "lodash"
+import _, { clone, find, reverse } from "lodash"
 
 function allSpiders(state = { list: [] }, action) {
     switch (action.type) {
         case 'list_update':
             return { list: action.list };
+        case "change_list":
+            const newlist = clone(state.list);
+            let s = find(newlist, { name: action.name });
+            if (s) {
+                Object.assign(s, action.data);
+            }
+            return { list: newlist };
         default:
             return state;
     }
@@ -27,6 +34,15 @@ export function addLog(name, msg) {
     }
 }
 
+export function update_list(name, data) {
+    store.dispatch({
+        type: "change_list",
+        name,
+        data,
+    });
+}
+
+
 export function changeStatus(name, ss) {
     store.dispatch({
         type: "status_change",
@@ -34,6 +50,8 @@ export function changeStatus(name, ss) {
         status: ss,
     });
 }
+
+
 
 
 function status(state = {}, action) {
@@ -62,6 +80,11 @@ function logger(state = {}, action) {
             return {
                 ...state,
                 ["log_" + action.name]: list,
+            }
+        case "log_clear":
+            return {
+                ...state,
+                ["log_" + action.name]: [],
             }
         default:
             return state;

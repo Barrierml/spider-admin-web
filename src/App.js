@@ -17,9 +17,7 @@ function storeUpdateList(list) {
   }
 }
 
-
-
-ws.onopen = async function () {
+async function init() {
   //初始化列表数据
   let list = await wsGet("list")
   //初始化日志
@@ -29,6 +27,8 @@ ws.onopen = async function () {
   });
   store.dispatch(storeUpdateList(list));
 }
+
+ws.onopen = init;
 
 export default class App extends react.Component {
   render() {

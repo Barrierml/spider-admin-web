@@ -1,14 +1,13 @@
-import _ from "lodash";
 import { useState } from "react"
 import { connect } from "react-redux";
 import { wsGet } from "../ws/ws";
 import Dialog from "./dialog"
 import Load from "./loading"
-import Logger from "./logger";
-
-
+import Setting from "./setting";
+import Logger from "./logger"
+import moment from "moment";
 function Li(props) {
-    const { status, title, rate } = props;
+    let { status, title, last_run, next_run } = props;
     let [show, setShow] = useState(false);
     let [load, setLoad] = useState(false);
     let [showLog, setLog] = useState(false);
@@ -23,16 +22,24 @@ function Li(props) {
         setLoad(false);
     }
 
+
+    last_run = last_run && moment(last_run).format("YYYY-MM-DD HH:mm:ss")
+    next_run = next_run && moment(next_run).format("YYYY-MM-DD HH:mm:ss")
+
     return (<div className=" relative hover:bg-light-blue-500 transition  hover:border-transparent hover:shadow-lg group block rounded-lg p-4 border border-gray-200">
         <Load show={load}></Load>
-        <dl className="grid sm:block lg:grid xl:block grid-cols-2 grid-rows-2 items-center">
-            <div className=" relative sm:mb-4 lg:mb-0 xl:mb-4">
-                <dd className="group-hover:text-white leading-6 font-medium text-black">{title}</dd>
-                <div className="absolute sm:right-0 sm:top-0 lg:right-6 lg:top-5 xl:right-0 xl:top-0 bg-blue-600 rounded p-1 text-white text-sm">{rate}</div>
+        <dl className="sm:block xl:block  items-center">
+            <div className=" relative lg:mb-0 xl:mb-4">
+
+                <dd className="group-hover:text-white leading-6 font-medium text-lg text-black">{title}</dd>
+                <div className="absolute sm:right-0 sm:top-0 lg:right-6 lg:top-5 xl:right-0 xl:top-0">
+                    <div className={"bg-yellow-500 rounded p-1 m-1 text-white text-sm"}>最后运行：{last_run || "无"}</div>
+                    <div className={"bg-blue-500 rounded p-1  m-1 text-white text-sm"}>下次运行：{next_run || "无"}</div>
+                </div>
             </div>
-            <div className="flex items-center sm:mb-4 lg:mb-0 xl:mb-4 space-x-2">
-                <dd className={`rounded-full ${status === "运行中" ? 'bg-green-400' : 'bg-red-500'} h-4 w-4`}></dd>
-                <dd className="group-hover:text-light-blue-200 text-gray-700 text-sm font-medium">{status}</dd>
+            <div className="flex items-center lg:mb-0 xl:mb-4 space-x-2">
+                <dd className={`rounded-full shadow ${status === "运行中" ? 'bg-green-400' : 'bg-red-500'} h-5 w-5`}></dd>
+                <dd className="group-hover:text-light-blue-200  text-base text-gray-700  font-medium">{status}</dd>
             </div>
             <div className="mt-2 col-start-2 row-start-1 row-end-3 flex space-x-2 flex-row">
                 <button disabled={status === "运行中" ? true : false} onClick={() => { setLoad(true); openSpider() }} className="hover:bg-light-blue-200 hover:text-light-blue-800 group flex items-center rounded-md bg-light-blue-100 text-light-blue-600 text-sm font-medium px-4 py-2">运行</button>
@@ -46,12 +53,16 @@ function Li(props) {
                 <button onClick={() => { setLog(true) }} className="ml-2 flex-shrink-0 text-sm font-medium transition-colors duration-200 ring-2 p-1 ring-current outline-none rounded-md text-violet-600 group-hover:text-gray-100">查看全部日志</button>
             </div>
         </dl>
-        <Dialog title={title + "日志"} show={showLog} onClose={() => { setLog(false) }}>
+        <Dialog
+            closeText="关闭日志"
+            okText={"清除日志"}
+            onConfrim={props.clearLog}
+            title={title + "的日志"}
+            show={showLog}
+            onClose={() => { setLog(false) }}>
             <Logger name={title}></Logger>
         </Dialog>
-        <Dialog title={title + " 修改配置"} show={show} onClose={() => { setShow(false) }}>
-            啊哈哈哈
-        </Dialog>
+        <Setting name={title} title={title + " 修改配置"} show={show} onClose={() => { setShow(false) }}></Setting>
     </div>)
 }
 
@@ -68,4 +79,11 @@ function stateToProps(state, props) {
     return { lastInfor, status }
 }
 
-export default connect(stateToProps)(Li)
+function dispatchToProps(dispatch, props) {
+    return {
+        clearLog: () => dispatch({ type: "log_clear", name: props.title })
+    }
+}
+
+
+export default connect(stateToProps, dispatchToProps)(Li)

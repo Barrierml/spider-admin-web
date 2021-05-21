@@ -1,4 +1,5 @@
 import { reverse } from "lodash";
+import moment from "moment";
 import { connect } from "react-redux";
 
 
@@ -20,8 +21,9 @@ export function Msg(props) {
         default:
             break;
     }
+    let time = moment(props.data.time).format("YYYY-MM-DD HH:mm:ss")
     return <li className={`p-1 rounded whitespace-pre-wrap transition border text-lg font-medium leading-normal hover:text-white my-1 hover:bg-${color}-400 text-${color}-400 border-${color}-400`} >
-        {props.data.data}
+        {`[${time}][${props.data.level}]-${props.data.data}`}
     </li>
 }
 
@@ -29,7 +31,7 @@ function Logger(props) {
     let res;
     if (props.list && props.list.length > 0) {
         res = reverse(props.list).map((e) =>
-            <Msg key={e.data} data={e}></Msg>
+            <Msg key={e.time} data={e}></Msg>
         )
     }
     else {

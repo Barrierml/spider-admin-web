@@ -6,9 +6,9 @@ class List extends react.Component {
         let _render = null;
         if (this.props?.list && this.props?.list.length > 0) {
             _render =
-                <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4">
+                <ul className="grid grid-cols-1 sm:grid-cols-1 xl:grid-cols-2 gap-4">
                     {this.props.list.map((e) =>
-                        <li><Li key={e.name} title={e.name} status={e.status} rate={e.rate}></Li></li>
+                        <li><Li key={e.name} title={e.name} {...e} ></Li></li>
                     )}
                 </ul>
         }

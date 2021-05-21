@@ -19,9 +19,9 @@ export default function Dd(props) {
                         <div className="mt-2">
                             {props.children}
                         </div>
-                        <div className="px-6 justify-end mt-4 space-x-4 flex">
-                            <button onClick={props.onConfrim} type="button" className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500" tabindex="0">确定</button>
-                            <button onClick={props.onClose} type="button" className="inline-flex justify-center px-4 py-2 text-sm font-medium text-red-900 bg-red-100 border border-transparent rounded-md hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-red-500" tabindex="0">取消</button>
+                        <div className="px-6 justify-end mt-6 space-x-4 flex">
+                            {props.onConfrim && <button onClick={props.onConfrim} type="button" className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500" tabindex="0">{props.okText || '确定'}</button>}
+                            {props.onClose && <button onClick={props.onClose} type="button" className="inline-flex justify-center px-4 py-2 text-sm font-medium text-red-900 bg-red-100 border border-transparent rounded-md hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-red-500" tabindex="0">{props.closeText || '取消'}</button>}
                         </div>
                     </div>
                 </div>

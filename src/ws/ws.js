@@ -1,4 +1,4 @@
-import store, { addLog, changeStatus } from "../store/store"
+import store, { addLog, changeStatus, update_list } from "../store/store"
 import _ from "lodash"
 window.store = store;
 
@@ -28,6 +28,14 @@ export function wsGet(msg, parma) {
   })
 }
 
+window.wsGet = wsGet;
+
+
+export async function wsSetSpider(name, setting) {
+  return await wsGet("set_spider", { name, parma: setting });
+}
+
+
 
 //系统消息回执
 function systemDispatch() {
@@ -39,11 +47,14 @@ function setDispatch(res) {
   const { type } = res;
   switch (type) {
     case "add_log":
-      return store.dispatch(addLog(res.name, { data: res.data, level:res.level }));
+      return store.dispatch(addLog(res.name, { ...res.data }));
     case "spider_close":
       return changeStatus(res.name, false);
     case "spider_open":
+      update_list(res.name, { ...res.data })
       return changeStatus(res.name, true);
+    case "update_spider":
+      return update_list(res.name, { ...res.data })
     default:
       return
   }
@@ -76,9 +87,14 @@ function dispatch(data) {
 }
 
 
+function onclose(params) {
+  console.log("服务器已断开");
+}
+
 function init() {
   const ws = window.ws = new WebSocket("ws://localhost:4000/spider");
   ws.onmessage = dispatch;
+  ws.onclose = onclose;
   return ws;
 }
 
